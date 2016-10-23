@@ -8,6 +8,7 @@ TABLES['bronze'] = (
 	"CREATE TABLE `gold` ("
 	"  `player_id` int(11) NOT NULL AUTO_INCREMENT,"
 	"  `username` varchar(20) NOT NULL,"
+	"  `password` varchar(25) NOT NULL,"
 	"  `elo` int(4) NOT NULL,"
 	"  `wins` int(10) NOT NULL,"
 	"  `losses` int(10) NOT NULL,"
@@ -20,6 +21,7 @@ TABLES['silver'] = (
 	"CREATE TABLE `gold` ("
 	"  `player_id` int(11) NOT NULL AUTO_INCREMENT,"
 	"  `username` varchar(20) NOT NULL,"
+	"  `password` varchar(25) NOT NULL,"
 	"  `elo` int(4) NOT NULL,"
 	"  `wins` int(10) NOT NULL,"
 	"  `losses` int(10) NOT NULL,"
@@ -33,6 +35,7 @@ TABLES['gold'] = (
 	"CREATE TABLE `gold` ("
 	"  `player_id` int(11) NOT NULL AUTO_INCREMENT,"
 	"  `username` varchar(20) NOT NULL,"
+	"  `password` varchar(25) NOT NULL,"
 	"  `elo` int(4) NOT NULL,"
 	"  `wins` int(10) NOT NULL,"
 	"  `losses` int(10) NOT NULL,"
@@ -76,10 +79,10 @@ for name, ddl in TABLES.iteritems():
         print "OK"
 
 add_player = ("INSERT INTO gold "
-			"(username, elo, wins, losses, skill, pref_role) "
-			"VALUES (%s, %s, %s, %s, %s, %s)")
+			"(username, password, elo, wins, losses, skill, pref_role) "
+			"VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
-data_player = ('xXxPlayer420xXx', 2500, 0, 0, 5, 'sup')
+data_player = ('xXxPlayer420xXx', 'password',2500, 0, 0, 5, 'sup')
 
 cursor.execute(add_player, data_player)
 
