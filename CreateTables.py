@@ -5,7 +5,7 @@ DB_NAME = 'players'
 
 TABLES = {}
 TABLES['bronze'] = (
-	"CREATE TABLE `gold` ("
+	"CREATE TABLE `bronze` ("
 	"  `player_id` int(11) NOT NULL AUTO_INCREMENT,"
 	"  `username` varchar(20) NOT NULL,"
 	"  `password` varchar(25) NOT NULL,"
@@ -18,7 +18,7 @@ TABLES['bronze'] = (
 	") ENGINE=InnoDB")
 	
 TABLES['silver'] = (
-	"CREATE TABLE `gold` ("
+	"CREATE TABLE `silver` ("
 	"  `player_id` int(11) NOT NULL AUTO_INCREMENT,"
 	"  `username` varchar(20) NOT NULL,"
 	"  `password` varchar(25) NOT NULL,"
