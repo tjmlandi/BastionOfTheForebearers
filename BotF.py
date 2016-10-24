@@ -5,30 +5,44 @@ from mysql.connector import errorcode
 try:
 	cnx = mysql.connector.connect(user='root',password='password',database='players')
 	cursor = cnx.cursor(buffered=True)
-	
-	user = raw_input("Please Enter Your Username: ")
-	pword = raw_input("Please Enter Your Password: ")
-	
-	query = ('SELECT * FROM bronze WHERE username="' + user + '" AND password="' + pword + '"')
-	cursor.execute(query)
-	
-	if cursor.rowcount > 0:
-		print "Player is in the league"
+	while True:
+		user = raw_input("Please Enter Your Username: ")
+		pword = raw_input("Please Enter Your Password: ")
 		
-	print cursor.rowcount
-	
-	query = ('SELECT * FROM gold')
-	cursor.execute(query)
-	
-	
-	print cursor.rowcount
-	
-	
-	#while true:
-	#	cmd = raw_input("~: ")
+		queryGold = ('SELECT * FROM gold WHERE username="' + user + '" AND password="' + pword + '"')
+		querySilver = ('SELECT * FROM silver WHERE username="' + user + '" AND password="' + pword + '"')
+		queryBronze = ('SELECT * FROM bronze WHERE username="' + user + '" AND password="' + pword + '"')
 		
+		cursor.execute(queryGold)
+		inGold = (cursor.rowcount > 0)
+		if inGold:
+			user = cursor.next()
 		
-	#	query = ("SELECT * FROM gold")
+		cursor.execute(querySilver)
+		inSilver = (cursor.rowcount > 0)
+		if inSilver:
+			user = cursor.next()
+		
+		cursor.execute(queryBronze)
+		inBronze = (cursor.rowcount > 0)
+		if inBronze:
+			user = cursor.next()
+		
+		if inGold or inSilver or inBronze:
+			break
+		else:
+			print "Usernamr or Password is incorrect"
+	
+	while True:
+		command = raw_input("~:")
+		if command == "help":
+			print "Available Commands:"
+			print "exit: Ends Program"
+		elif command == "exit":
+			print "Goodbye"
+			break
+	
+	
 		
 		
 except mysql.connector.Error as err:
