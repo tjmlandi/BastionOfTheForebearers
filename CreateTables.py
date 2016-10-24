@@ -46,9 +46,16 @@ TABLES['gold'] = (
 	"  PRIMARY KEY (`player_id`)"
 	") ENGINE=InnoDB")
 	
-TABLES['online'] = (
-	"CREATE TABLE `online` ("
-	"  `player_id` int(11) NOT NULL AUTO_INCREMENT,"
+TABLES['online_players'] = (
+	"CREATE TABLE `online_players` ("
+	"  `player_id` int(11) NOT NULL,"
+	"  `league` enum('gold', 'bronze', 'silver') NOT NULL,"
+	"  PRIMARY KEY (`player_id`)"
+	") ENGINE=InnoDB")
+	
+TABLES['in_game'] = (
+	"CREATE TABLE `in_game` ("
+	"  `player_id` int(11) NOT NULL,"
 	"  `league` enum('gold', 'bronze', 'silver') NOT NULL,"
 	"  PRIMARY KEY (`player_id`)"
 	") ENGINE=InnoDB")

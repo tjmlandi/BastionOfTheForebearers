@@ -17,21 +17,31 @@ try:
 		inGold = (cursor.rowcount > 0)
 		if inGold:
 			user = cursor.next()
+			league = 'gold'
 		
 		cursor.execute(querySilver)
 		inSilver = (cursor.rowcount > 0)
 		if inSilver:
 			user = cursor.next()
+			league = 'silver'
 		
 		cursor.execute(queryBronze)
 		inBronze = (cursor.rowcount > 0)
 		if inBronze:
 			user = cursor.next()
+			league = 'bronze'
 		
 		if inGold or inSilver or inBronze:
 			break
 		else:
-			print "Usernamr or Password is incorrect"
+			print "Username or Password is incorrect"
+	
+	add_player = ("INSERT INTO online_players "
+			"(player_id, league) "
+			"VALUES (%s, %s)")
+	data_player = (user[0], league)
+	cursor.execute(add_player, data_player)
+	cnx.commit()
 	
 	while True:
 		command = raw_input("~:")
@@ -40,6 +50,9 @@ try:
 			print "exit: Ends Program"
 		elif command == "exit":
 			print "Goodbye"
+			delete_player = ("DELETE FROM online_players WHERE player_id = " + str(user[0]))
+			cursor.execute(delete_player)
+			cnx.commit()
 			break
 	
 	
