@@ -1,13 +1,15 @@
 import mysql.connector
+import generate_name
+import random
 from mysql.connector import errorcode
 
 DB_NAME = 'players'
 
 TABLES = {}
 TABLES['bronze'] = (
-	"CREATE TABLE `gold` ("
+	"CREATE TABLE `bronze` ("
 	"  `player_id` int(11) NOT NULL AUTO_INCREMENT,"
-	"  `username` varchar(20) NOT NULL,"
+	"  `username` varchar(100) NOT NULL,"
 	"  `password` varchar(25) NOT NULL,"
 	"  `elo` int(4) NOT NULL,"
 	"  `wins` int(10) NOT NULL,"
@@ -18,9 +20,9 @@ TABLES['bronze'] = (
 	") ENGINE=InnoDB")
 	
 TABLES['silver'] = (
-	"CREATE TABLE `gold` ("
+	"CREATE TABLE `silver` ("
 	"  `player_id` int(11) NOT NULL AUTO_INCREMENT,"
-	"  `username` varchar(20) NOT NULL,"
+	"  `username` varchar(100) NOT NULL,"
 	"  `password` varchar(25) NOT NULL,"
 	"  `elo` int(4) NOT NULL,"
 	"  `wins` int(10) NOT NULL,"
@@ -34,13 +36,20 @@ TABLES['silver'] = (
 TABLES['gold'] = (
 	"CREATE TABLE `gold` ("
 	"  `player_id` int(11) NOT NULL AUTO_INCREMENT,"
-	"  `username` varchar(20) NOT NULL,"
+	"  `username` varchar(100) NOT NULL,"
 	"  `password` varchar(25) NOT NULL,"
 	"  `elo` int(4) NOT NULL,"
 	"  `wins` int(10) NOT NULL,"
 	"  `losses` int(10) NOT NULL,"
 	"  `skill` int(2) NOT NULL,"
 	"  `pref_role` enum('top','mid','bot','sup','jungle') NOT NULL,"
+	"  PRIMARY KEY (`player_id`)"
+	") ENGINE=InnoDB")
+	
+TABLES['online'] = (
+	"CREATE TABLE `online` ("
+	"  `player_id` int(11) NOT NULL AUTO_INCREMENT,"
+	"  `league` enum('gold', 'bronze', 'silver') NOT NULL,"
 	"  PRIMARY KEY (`player_id`)"
 	") ENGINE=InnoDB")
 
@@ -82,9 +91,58 @@ add_player = ("INSERT INTO gold "
 			"(username, password, elo, wins, losses, skill, pref_role) "
 			"VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
-data_player = ('xXxPlayer420xXx', 'password',2500, 0, 0, 5, 'sup')
+for i in range(0,1000):
+	role = random.randint(0,4)
+	if role == 0:
+		roleStr = 'top'
+	elif role == 1:
+		roleStr = 'bot'
+	elif role == 2:
+		roleStr = 'mid'
+	elif role == 3:
+		roleStr = 'sup'
+	else:
+		roleStr = 'jungle'
+	data_player = (generate_name.generate_name(), 'password',random.randint(4000,6000), 0, 0, random.randint(0,10), roleStr)
+	cursor.execute(add_player, data_player)
+	
+add_player = ("INSERT INTO silver "
+			"(username, password, elo, wins, losses, skill, pref_role) "
+			"VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
-cursor.execute(add_player, data_player)
+for i in range(0,1000):
+	role = random.randint(0,4)
+	if role == 0:
+		roleStr = 'top'
+	elif role == 1:
+		roleStr = 'bot'
+	elif role == 2:
+		roleStr = 'mid'
+	elif role == 3:
+		roleStr = 'sup'
+	else:
+		roleStr = 'jungle'
+	data_player = (generate_name.generate_name(), 'password',random.randint(2000,4000), 0, 0, random.randint(0,10), roleStr)
+	cursor.execute(add_player, data_player)
+	
+add_player = ("INSERT INTO bronze "
+			"(username, password, elo, wins, losses, skill, pref_role) "
+			"VALUES (%s, %s, %s, %s, %s, %s, %s)")
+
+for i in range(0,1000):
+	role = random.randint(0,4)
+	if role == 0:
+		roleStr = 'top'
+	elif role == 1:
+		roleStr = 'bot'
+	elif role == 2:
+		roleStr = 'mid'
+	elif role == 3:
+		roleStr = 'sup'
+	else:
+		roleStr = 'jungle'
+	data_player = (generate_name.generate_name(), 'password',random.randint(0,2000), 0, 0, random.randint(0,10), roleStr)
+	cursor.execute(add_player, data_player)
 
 cnx.commit();			
 

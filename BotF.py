@@ -4,13 +4,25 @@ from mysql.connector import errorcode
 
 try:
 	cnx = mysql.connector.connect(user='root',password='password',database='players')
-	cursor = cnx.cursor()
+	cursor = cnx.cursor(buffered=True)
 	
 	user = raw_input("Please Enter Your Username: ")
 	pword = raw_input("Please Enter Your Password: ")
 	
-	query = ('SELECT * FROM gold WHERE username="' + user + '" AND password="' + pword + '"')]
+	query = ('SELECT * FROM bronze WHERE username="' + user + '" AND password="' + pword + '"')
 	cursor.execute(query)
+	
+	if cursor.rowcount > 0:
+		print "Player is in the league"
+		
+	print cursor.rowcount
+	
+	query = ('SELECT * FROM gold')
+	cursor.execute(query)
+	
+	
+	print cursor.rowcount
+	
 	
 	#while true:
 	#	cmd = raw_input("~: ")
