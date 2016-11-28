@@ -15,11 +15,13 @@ def player_selector(middleElo, league):
 		
 		playerCount = cursor.rowcount
 		
-		players = [10]
+		players = [[0 for x in range(5)] for y in range(2)]
 		
 		if playerCount > 10:
-			for x in range(0,10):
-				players.insert(x, cursor.next())
+			for x in range(0,5):
+				players[0].insert(x, cursor.next())
+			for x in range(0,5):
+				players[1].insert(x, cursor.next())
 			
 		cnx.commit()
 		

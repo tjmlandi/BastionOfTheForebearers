@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
 
-#Bastion of the Forebearers
+#Bastion of the Forerunners
 try:
 	cnx = mysql.connector.connect(user='root',password='password',database='players')
 	cursor = cnx.cursor(buffered=True)
