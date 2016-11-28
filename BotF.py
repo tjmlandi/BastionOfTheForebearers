@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
 
-
+#Bastion of the Forebearers
 try:
 	cnx = mysql.connector.connect(user='root',password='password',database='players')
 	cursor = cnx.cursor(buffered=True)
@@ -46,38 +46,8 @@ try:
 	while True:
 		command = raw_input("~:")
 		if command == "help":
-			print "Available Commands: view_online, view_stats, queue, queue_season"
+			print "Available Commands:"
 			print "exit: Ends Program"
-		elif command == "queue":
-			
-		elif command == "view_stats":
-			print "%s, - %s League" % (user[1], league)
-			print "ELO: %d - Wins: %d - Losses: %d, Preferred Role: %s" % (user[3], user[4], user[5], user[7])
-		elif command == "view_online":
-			print "Gold Players Online:"
-			cursor.execute("select * from gold, online_players where gold.player_id = online_players.player_id and online_players.league = 'gold'")
-			results = cursor.fetchall()
-			for row in results:
-			  fname = row[1]
-			  # Now print fetched result
-			  print "%s" % \
-					 (fname)
-			print "Silver Players Online:"
-			cursor.execute("select * from silver, online_players where silver.player_id = online_players.player_id and online_players.league = 'silver'")
-			results = cursor.fetchall()
-			for row in results:
-			  fname = row[1]
-			  # Now print fetched result
-			  print "%s" % \
-					 (fname)
-			print "Bronze Players Online:"
-			cursor.execute("select * from bronze, online_players where bronze.player_id = online_players.player_id and online_players.league = 'bronze'")
-			results = cursor.fetchall()
-			for row in results:
-			  fname = row[1]
-			  # Now print fetched result
-			  print "%s" % \
-					 (fname)
 		elif command == "exit":
 			print "Goodbye"
 			delete_player = ("DELETE FROM online_players WHERE player_id = " + str(user[0]))
