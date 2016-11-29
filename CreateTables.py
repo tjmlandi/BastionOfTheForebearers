@@ -50,6 +50,7 @@ TABLES['online_players'] = (
 	"CREATE TABLE `online_players` ("
 	"  `player_id` int(11) NOT NULL,"
 	"  `league` enum('gold', 'bronze', 'silver') NOT NULL,"
+	"  `queued` int(2) NOT NULL,"
 	"  PRIMARY KEY (`player_id`)"
 	") ENGINE=InnoDB")
 	
