@@ -41,7 +41,7 @@ def player_selector(middleElo, league):
 		
 	return players
 	
-def online_player_selector(middleElo, league):
+def online_player_selector(middleElo,playerid, league):
 	try:
 		cnx = mysql.connector.connect(user='root',password='password',database='players')
 		cursor = cnx.cursor(buffered=True)
@@ -53,7 +53,7 @@ def online_player_selector(middleElo, league):
 			upper = middleElo + bound
 			lower = middleElo - bound
 			
-			query = ('SELECT * FROM online_players WHERE elo>' + str(lower) + ' AND elo<' + str(upper) + ' AND league="' + league + '" ORDER BY RAND()')
+			query = ('SELECT * FROM online_players WHERE elo>' + str(lower) + ' AND elo<' + str(upper) + ' AND league="' + league +' AND player_id !="' + playerid+ '" ORDER BY RAND()')
 			
 			cursor.execute(query)
 			
