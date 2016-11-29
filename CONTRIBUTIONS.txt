@@ -6,9 +6,11 @@ Thomas Landi
 -Season Simulation
 
 Aaron Starr
+- User Interface
+- Alterations to Database creation
+- Singleton queue
 
 Lijing Zhang
 -Database Setup
 -game manager
 -online player select
-
