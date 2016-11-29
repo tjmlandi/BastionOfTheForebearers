@@ -8,6 +8,7 @@ Thomas Landi
 Aaron Starr
 
 Lijing Zhang
-
-
+-Database Setup
+-game manager
+-online player select
 
