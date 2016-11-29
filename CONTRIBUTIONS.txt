@@ -2,7 +2,12 @@ Team SoloMid : Bastion of the Forebearers
 
 Names:
 Thomas Landi
+-Database Setup/Initialization
+-Season Simulation
+
 Aaron Starr
+
 Lijing Zhang
+
 
 
