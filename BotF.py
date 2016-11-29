@@ -1,4 +1,5 @@
 import mysql.connector
+import random
 import os
 import time
 from mysql.connector import errorcode
@@ -69,8 +70,10 @@ try:
 				print "Sorry, there are less than 10 players online"
 				continue
 			searching = True
+			search_attempts = 0 #used to determine if there are even 10 queued players after attempting 100 times (elo deviation of 1000)
 			user_elo = user[3] #logged in user's elo (for matchmaking range)
-			queued_users_list = [] #list for game (10 players)
+			queued_users_list = [] #list for game (10 players
+			queued_users_list.append(user)
 			user_elo_deviation = 10 # This number is the starting +- range for matchmaking
 			
 			#Update the user in online_players to show they are queued
@@ -82,7 +85,10 @@ try:
 			while searching:
 				#clear screen (for screen image)
 				os.system('cls')
-				
+				if search_attempts == 100:
+					print "Queueing was unsuccessful due to a lack of players online and queued within your ELO range."
+					break
+				search_attempts += 1
 				#check if user is in a game already
 				#print "TEST2"
 				cursor.execute("SELECT * FROM in_game WHERE in_game.player_id = " +str(user[0]))
@@ -110,10 +116,7 @@ try:
 				#	cnx.commit()
 				#	break
 				
-	
-				print "    /\    "
-				print "    ||    "
-				print "    \/    "
+				print ". . ."
 				
 				#select all players queued
 				cursor.execute("select * from online_players where online_players.queued=1")
@@ -161,9 +164,7 @@ try:
 						queued_users_list.remove(person)
 				time.sleep(3) #wait for any update/other queues
 				os.system('cls')
-				print "    /\    "
-				print "    |||    "
-				print "    \/    "
+				print ". ."
 				time.sleep(3) #wait for any update/other queues
 				user_elo_deviation = user_elo_deviation + 10 #increase elo range for search
 				if len(queued_users_list) == 10:
@@ -172,6 +173,8 @@ try:
 					print "ERROR: List has more than 10 people in it"
 			
 			#ADD PLAYERS TO IN_GAME
+			os.system('cls')
+			print "Starting Game..."
 			add_player = ("INSERT INTO in_game "
 			"(player_id, league) "
 			"VALUES (%s, %s)")
@@ -182,9 +185,61 @@ try:
 			#CHANGE ONLINE STATUS TO NOT QUEUED
 			cursor.execute('UPDATE online_players SET queued=0 WHERE "' +str(user[0])+ '"=online_players.player_id')
 			cnx.commit()
-			break
 			
-			#RUN GAME AND UPDATE ELO/ETC?
+			#RUN GAME AND UPDATE ELO/ETC
+			print "Game in Progess!"
+			first_team_skill = 0
+			first_team_elo = 0
+			second_team_skill = 0
+			second_team_elo = 0
+			for user in queued_users_list[0:5]:
+				first_team_skill += int(user[6])
+				first_team_elo += int(user[3])
+			for user2 in queued_users_list[5:]:
+				second_team_skill += int(user2[6])
+				second_team_elo += int(user2[3])
+			difference_skill = abs(second_team_skill - first_team_skill)
+			difference_skill += 50
+			difference_elo = abs((second_team_elo - first_team_elo))/6
+			randomint = random.randint(0,100)
+			if (randomint > difference_skill) and (first_team_skill > second_team_skill):
+				print "Your Team Won!"
+				for user in queued_users_list[0:5]:
+					cursor.execute("UPDATE bronze, silver, gold "
+					"SET wins=wins+1 elo=elo+"+str(difference_elo)+""
+					"WHERE " +str(user[0])+ "=bronze.player_id OR "
+					"WHERE " +str(user[0])+ "=silver.player_id OR "
+					"WHERE " +str(user[0])+ "=gold.player_id")
+				cnx.commit()
+				for user2 in queued_users_list[5:]:
+					cursor.execute('UPDATE bronze, silver, gold SET losses=losses+1 elo=elo-"'+str(difference_elo)+'" WHERE "' +str(user2[0])+ '"=bronze.player_id OR "' +str(user[0])+ '"=silver.player_id OR "' +str(user[0])+ '"=gold.player_id')
+				cnx.commit()
+			if (randomint > difference_skill) and (first_team_skill < second_team_skill):
+				print "Your Team Lost"
+				for user in queued_users_list[0:5]:
+					cursor.execute('UPDATE bronze, silver, gold SET losses=losses+1 elo=elo-"'+str(difference_elo)+'" WHERE "' +str(user[0])+ '"=bronze.player_id OR "' +str(user[0])+ '"=silver.player_id OR "' +str(user[0])+ '"=gold.player_id')
+				cnx.commit()
+				for user2 in queued_users_list[5:]:
+					cursor.execute('UPDATE bronze, silver, gold SET wins=wins+1 elo=elo+"'+str(difference_elo)+'" WHERE "' +str(user2[0])+ '"=bronze.player_id OR "' +str(user[0])+ '"=silver.player_id OR "' +str(user[0])+ '"=gold.player_id')
+				cnx.commit()
+			if (randomint < difference_skill) and (first_team_skill < second_team_skill):
+				print "Your Team Won!"
+				for user in queued_users_list[0:5]:
+					cursor.execute('UPDATE bronze, silver, gold SET wins=wins+1 elo=elo+"'+str(difference_elo)+'" WHERE "' +str(user[0])+ '"=bronze.player_id OR "' +str(user[0])+ '"=silver.player_id OR "' +str(user[0])+ '"=gold.player_id')
+				cnx.commit()
+				for user2 in queued_users_list[5:]:
+					cursor.execute('UPDATE bronze, silver, gold SET losses=losses+1 elo=elo-"'+str(difference_elo)+'" WHERE "' +str(user2[0])+ '"=bronze.player_id OR "' +str(user[0])+ '"=silver.player_id OR "' +str(user[0])+ '"=gold.player_id')
+				cnx.commit()
+			if (randomint < difference_skill) and (first_team_skill > second_team_skill):
+				print "Your Team Lost"
+				for user in queued_users_list[0:5]:
+					cursor.execute('UPDATE bronze, silver, gold SET losses=losses+1 elo=elo-"'+str(difference_elo)+'" WHERE "' +str(user[0])+ '"=bronze.player_id OR "' +str(user[0])+ '"=silver.player_id OR "' +str(user[0])+ '"=gold.player_id')
+				cnx.commit()
+				for user2 in queued_users_list[5:]:
+					cursor.execute('UPDATE bronze, silver, gold SET wins=wins+1 elo=elo+"'+str(difference_elo)+'" WHERE "' +str(user2[0])+ '"=bronze.player_id OR "' +str(user[0])+ '"=silver.player_id OR "' +str(user[0])+ '"=gold.player_id')
+				cnx.commit()
+			time.sleep(5)
+			continue
 				
 		elif command == "view_stats":
 			print "%s, - %s League" % (user[1], league)
