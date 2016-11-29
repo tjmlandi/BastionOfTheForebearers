@@ -13,51 +13,92 @@ try:
 	while True:
 		command = raw_input("~:")
 		if command == "simulate":
-			for l in range(0,3):
-				if l == 0:
-					league = 'bronze'
-				if l == 1:
-					league = 'silver'
-				if l == 2:
-					league = 'gold'
-				for i in range(0,10):
-					elo = (2000 * l) + (i * 200)
-					players = player_selector.player_selector(elo, league)
-					teamOne = 0 
-					teamTwo = 0
-					for x in range(0,5):
-						teamOne += players[0][x][6]
-					for x in range(0,5):
-						teamTwo += players[1][x][6]
-					if max(teamOne, teamTwo) == teamOne:
-						skillTeam = 0
-						noSkillTeam = 1
-					else:
-						skillTeam = 1
-						noSkillTeam = 0
-					chance = 50 + abs(teamOne - teamTwo)
-					result = random.randint(0,100)
-					if result < chance:
-						print 'High skill team won'
-						for x in range(0,5):
-							print players[skillTeam][x][0]
-							query = ('UPDATE ' + league + ' SET wins=wins + 1 ' + ' WHERE player_id=' + str(players[skillTeam][x][0]))
-							cursor.execute(query)
-						for x in range(0,5):
-							print players[noSkillTeam][x][0]
-							query = ('UPDATE ' + league + ' SET losses=losses + 1 ' + ' WHERE player_id=' + str(players[noSkillTeam][x][0]))
-							cursor.execute(query)
-					else:
-						for x in range(0,5):
-							print players[noSkillTeam][x][0]
-							query = ('UPDATE ' + league + ' SET wins=wins + 1 ' + ' WHERE player_id=' + str(players[noSkillTeam][x][0]))
-							cursor.execute(query)
-						for x in range(0,5):
-							print players[skillTeam][x][0]
-							query = ('UPDATE ' + league + ' SET losses=losses + 1 ' + ' WHERE player_id=' + str(players[skillTeam][x][0]))
-							cursor.execute(query)
-						print 'Low skill team won'
-					cnx.commit()	
+			for iterations in range(0,100):
+				print iterations
+				for leagues in range(0,3):
+					if leagues == 0:
+						league = 'bronze'
+					if leagues == 1:
+						league = 'silver'
+					if leagues == 2:
+						league = 'gold'
+					for inner in range(0,10):
+						elo = (2000 * leagues) + (inner * 200)
+						players = player_selector.player_selector(elo, league)
+						teamOne = 0 
+						teamTwo = 0
+						teamOneElo = 0
+						teamTwoElo = 0
+						for one in range(0,5):
+							teamOne += players[0][one][6]
+							teamOneElo += players[0][one][3]
+						for two in range(0,5):
+							teamTwo += players[1][two][6]
+							teamTwoElo += players[1][two][3]
+						if max(teamOne, teamTwo) == teamOne:
+							skillTeam = 0
+							noSkillTeam = 1
+						else:
+							skillTeam = 1
+							noSkillTeam = 0
+						chance = 50 + abs(teamOne - teamTwo)
+						result = random.randint(0,100)
+						eloAdj = abs(teamOneElo - teamTwoElo) / 6
+						if result < chance:
+							#print 'High skill team won'
+							for x in range(0,5):
+								#print players[skillTeam][x][0]
+								#print players[skillTeam][x][3]
+								query = ('UPDATE ' + league + ' SET wins=wins + 1 ' + ' WHERE player_id=' + str(players[skillTeam][x][0]))
+								cursor.execute(query)
+								query = ('UPDATE ' + league + ' SET elo=elo + ' + str(eloAdj) + ' WHERE player_id=' + str(players[skillTeam][x][0]))
+								cursor.execute(query)
+							for x in range(0,5):
+								#print players[noSkillTeam][x][0]
+								#print players[noSkillTeam][x][3]
+								query = ('UPDATE ' + league + ' SET losses=losses + 1 ' + ' WHERE player_id=' + str(players[noSkillTeam][x][0]))
+								cursor.execute(query)
+								query = ('UPDATE ' + league + ' SET elo=elo - ' + str(eloAdj) + ' WHERE player_id=' + str(players[noSkillTeam][x][0]))
+								cursor.execute(query)
+						else:
+							for x in range(0,5):
+								#print players[noSkillTeam][x][0]
+								#print players[noSkillTeam][x][3]
+								query = ('UPDATE ' + league + ' SET wins=wins + 1 ' + ' WHERE player_id=' + str(players[noSkillTeam][x][0]))
+								cursor.execute(query)
+								query = ('UPDATE ' + league + ' SET elo=elo + ' + str(eloAdj) + ' WHERE player_id=' + str(players[noSkillTeam][x][0]))
+								cursor.execute(query)
+							for x in range(0,5):
+								#print players[skillTeam][x][0]
+								#print players[skillTeam][x][3]
+								query = ('UPDATE ' + league + ' SET losses=losses + 1 ' + ' WHERE player_id=' + str(players[skillTeam][x][0]))
+								cursor.execute(query)
+								query = ('UPDATE ' + league + ' SET elo=elo - ' + str(eloAdj) + ' WHERE player_id=' + str(players[skillTeam][x][0]))
+								cursor.execute(query)
+							#print 'Low skill team won'
+						
+						cnx.commit()	
+			query = ('INSERT INTO silver SELECT * from bronze where elo>2000')
+			cursor.execute(query)
+			query = ('DELETE FROM bronze WHERE elo>2000')
+			cursor.execute(query)
+			cnx.commit()
+			query = ('INSERT INTO bronze SELECT * from silver where elo<2000')
+			cursor.execute(query)
+			query = ('DELETE FROM silver WHERE elo<2000')
+			cursor.execute(query)
+			cnx.commit()
+			
+			query = ('INSERT INTO gold SELECT * from silver where elo>4000')
+			cursor.execute(query)
+			query = ('DELETE FROM silver WHERE elo>4000')
+			cursor.execute(query)
+			cnx.commit()
+			query = ('INSERT INTO silver SELECT * from gold where elo<4000')
+			cursor.execute(query)
+			query = ('DELETE FROM gold WHERE elo<4000')
+			cursor.execute(query)
+			cnx.commit()
 			
 		elif command == "help":
 			print "Available Commands:"

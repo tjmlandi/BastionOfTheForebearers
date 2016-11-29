@@ -93,6 +93,12 @@ for name, ddl in TABLES.iteritems():
             print err.msg
     else:
         print "OK"
+		
+query = ('ALTER TABLE silver AUTO_INCREMENT=1001')
+cursor.execute(query)
+
+query = ('ALTER TABLE gold AUTO_INCREMENT=2001')
+cursor.execute(query)
 
 add_player = ("INSERT INTO gold "
 			"(username, password, elo, wins, losses, skill, pref_role) "
